@@ -1,0 +1,194 @@
+# ============================================================================
+#  Fishing-vessel deck-video analysis pipeline — unified config
+#  Used by all stages (01_coarse_features → 04_fine_grained_analysis).
+#  Replaces the old configs/config.yaml (kept for backwards compatibility).
+# ============================================================================
+
+# ---------- I/O paths ----------
+paths:
+  video_root: "//DS224plus/video/viedeo"     # NAS source root (all nights)
+  night_video_root: "//DS224plus/video/0515"  # single-night subdir for review clips
+  output_root: "outputs"
+  pipeline_root: "outputs/pipeline"           # new per-night results land here
+  cache_dir: "cache"
+  log_dir: "logs"
+  data_dir: "data"
+
+# Active night being processed. Layer 2/3 outputs go under
+#   {output_root}/coarse_{night_tag}/...
+night_tag: "0515"
+
+# ============================================================================
+#  Layer 1 — coarse feature extraction
+# ============================================================================
+coarse_features:
+  # Keyframe-only decode (-skip_frame nokey). One sample every
+  # kf_subsample × keyframe_interval ≈ 12 s.
+  kf_subsample: 3
+  kf_interval_sec: 4.0
+
+  resize_width: 640
+  resize_height: 360
+
+  # ROI definition in pct coordinates (works at any source resolution).
+  rois:
+    left_deck:   {x_min: 0.000, x_max: 0.333, y_min: 0.4, y_max: 1.0}
+    center_deck: {x_min: 0.333, x_max: 0.667, y_min: 0.4, y_max: 1.0}
+    right_deck:  {x_min: 0.667, x_max: 1.000, y_min: 0.4, y_max: 1.0}
+
+  # Per-feature toggles. Disable to skip computation.
+  features:
+    brightness: true
+    color: true
+    motion: true
+    edge: true
+    texture: true        # laplacian variance
+    entropy: true
+
+  # Edge / Canny
+  canny_low: 50
+  canny_high: 150
+
+  num_workers: 4
+
+# ============================================================================
+#  Layer 2 — cycle detection (valley-to-valley boundaries on motion signal)
+# ============================================================================
+cycle_detection:
+  resample_freq: "1min"
+  smoothing:
+    savgol_window: 11
+    savgol_polyorder: 2
+
+  # Combined cycle-score weights (only used by the legacy peak detector)
+  cycle_score_weights:
+    motion: 0.55
+    edge: 0.35
+    entropy: 0.10
+
+  valley_detection:
+    min_distance_min: 25       # minimum gap between cycle boundaries (minutes)
+    prominence: 1.2
+    depth_percentile: 35       # only keep valleys below this percentile of motion
+
+  peak_detection:
+    min_distance_min: 30
+    prominence: 3.5
+    min_width_min: 5
+
+  # Night-time mask: only look for cycles inside this window
+  night_window:
+    start: "20:30"
+    end:   "08:30"
+
+  fft:
+    period_min_low: 20
+    period_min_high: 180
+    max_autocorr_lag_min: 600
+
+# ============================================================================
+#  Layer 3 — core window detection (net-on-deck → fish-transfer-end)
+# ============================================================================
+core_window:
+  smoothing:
+    savgol_window: 7
+    savgol_polyorder: 2
+
+  left_edge:        # net-on-deck side
+    prominence: 0.008
+    min_distance_min: 10
+    search_first_pct: 0.70    # look for peak in first 70 % of cycle
+    rise_threshold_low_quantile: 0.30
+    rise_threshold_rise_frac: 0.70
+
+  right_edge:       # fish-transfer side
+    prominence: 0.008
+    min_distance_min: 15
+    fall_threshold_low_quantile: 0.40
+    fall_threshold_rise_frac: 0.30
+
+  # Per-cycle quality flags (used by review report generator)
+  confidence_rules:
+    core_window_short_min: 15
+    core_window_long_min: 30
+    right_edge_increase_weak: 1.05
+    cycle_long_min: 60
+
+# ============================================================================
+#  Review-video generator (cuts source clips for the detected core windows)
+# ============================================================================
+review_video:
+  output_subdir: "review_videos"
+  crf_cut: 27
+  preset_cut: "ultrafast"
+  crf_final: 23
+  preset_final: "medium"
+  speedup_factor: 4
+
+# ============================================================================
+#  Layer 4 — fine-grained analysis (stubs, future work)
+# ============================================================================
+fine_grained:
+  # Restrict EVERY heavy CV model to this stage of each cycle.
+  # "core"   = net_on_deck_time → fish_end_time
+  # "fish"   = fish_start_time   → fish_end_time   (most economical)
+  default_window: "fish"
+
+  net_size_estimation:
+    enabled: false
+    sam2_checkpoint: "third_party/sam2/checkpoints/sam2.1_hiera_base_plus.pt"
+    sam2_model_cfg:  "configs/sam2.1/sam2.1_hiera_b+.yaml"
+    sam2_device:     "cuda"
+
+    # Sparse keyframe sampling — 3 groups per cycle, ~10 frames total
+    sampling:
+      net_landing:
+        window_before_sec: 5
+        window_after_sec:  30
+        interval_sec:      15
+      net_settled:
+        center_offset_pct: 0.5
+        count:             2
+        interval_sec:      8
+      fish_transfer:
+        edge_trim_sec:     30
+        count:             5
+
+    # Point-prompted SAM (box + single point, left_deck ROI)
+    segmentation:
+      prompt_mode: "box_point"              # "box_point" | "auto" | "point"
+      box_prompt_rel: [0.15, 0.20, 0.85, 0.75]   # x1,y1,x2,y2 normalized
+      point_prompt_rel: [0.5, 0.45]              # x,y normalized
+      min_mask_area_frac: 0.005
+      max_mask_area_frac: 0.80
+
+    # Suspended-net geometric detector (net_rise window only)
+    suspended_net_geometry:
+      sample_interval_sec: 3       # sample frames every N seconds
+      vertical_ratio_min: 1.5       # mask height/width > this → tall narrow hanging shape
+      suspension_height_min: 0.25   # mask vertical span / roi_h > this → full hanging net
+      center_right_region: [0.4, 0.9]  # net hangs in center-right of left_deck ROI
+      compactness_min: 0.3          # mask area / bbox area > this → solid shape, not scattered
+
+    # Lightweight IoU consistency filter (built from net_settled frames)
+    tracking:
+      min_iou_to_ref:  0.25
+      max_area_ratio:  3.0
+
+    # Temporal smoothing of per-frame area
+    smoothing:
+      window_frames: 3
+      method:        "median"     # "median" | "savgol"
+
+    # Volume proxy (relative size index per cycle)
+    volume_proxy:
+      size_class_method:   "terciles"   # "terciles" | "fixed"
+      use_motion_envelope: true
+  basket_counting:
+    enabled: false
+    sample_fps: 2.0
+    model: "yolov8n"
+  catch_volume_estimation:
+    enabled: false
+  fish_species_detection:
+    enabled: false

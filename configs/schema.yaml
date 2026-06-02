@@ -1,0 +1,73 @@
+# Parquet Schema v1.0 — FROZEN
+# 规则：已有列不可修改/删除，新增特征只能 append 到末尾
+
+columns:
+  - name: video_id
+    dtype: string
+    nullable: false
+  - name: frame_idx
+    dtype: int32
+    nullable: false
+  - name: timestamp_sec
+    dtype: float32
+    nullable: false
+  - name: roi_name
+    dtype: string
+    nullable: false
+  - name: sample_fps
+    dtype: float32
+    nullable: false
+  - name: mean_brightness
+    dtype: float32
+    nullable: false
+  - name: brightness_std
+    dtype: float32
+    nullable: false
+  - name: mean_r
+    dtype: float32
+    nullable: false
+  - name: mean_g
+    dtype: float32
+    nullable: false
+  - name: mean_b
+    dtype: float32
+    nullable: false
+  - name: motion_intensity
+    dtype: float32
+    nullable: false
+  - name: edge_density
+    dtype: float32
+    nullable: false
+  - name: laplacian_variance
+    dtype: float32
+    nullable: false
+  - name: entropy
+    dtype: float32
+    nullable: false
+  - name: scene_transition
+    dtype: float32
+    nullable: false
+  - name: global_motion_x
+    dtype: float32
+    nullable: false
+  - name: global_motion_y
+    dtype: float32
+    nullable: false
+  - name: global_motion_mag
+    dtype: float32
+    nullable: false
+  - name: local_motion_intensity
+    dtype: float32
+    nullable: false
+  - name: brightness_rolling_mean_30s
+    dtype: float32
+    nullable: false
+  - name: brightness_rolling_std_30s
+    dtype: float32
+    nullable: false
+  - name: motion_rolling_mean_30s
+    dtype: float32
+    nullable: false
+  - name: motion_rolling_std_30s
+    dtype: float32
+    nullable: false

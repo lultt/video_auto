@@ -1,0 +1,63 @@
+# 灯光罩网渔船前甲板视频自动作业解析系统 - 配置文件 v1.0
+
+video_root: "//DS224plus/video/viedeo"
+
+output_dir: "outputs"
+cache_dir: "cache"
+log_dir: "logs"
+data_dir: "data"
+
+# 采样策略
+resize_width: 640
+resize_height: 360
+
+# ROI定义（百分比坐标，适配任意分辨率）
+rois:
+  left_deck:
+    x_min: 0.0
+    x_max: 0.333
+    y_min: 0.4
+    y_max: 1.0
+  center_deck:
+    x_min: 0.333
+    x_max: 0.667
+    y_min: 0.4
+    y_max: 1.0
+  right_deck:
+    x_min: 0.667
+    x_max: 1.0
+    y_min: 0.4
+    y_max: 1.0
+
+# 特征开关
+features:
+  brightness: true
+  color: true
+  motion: true
+  edge: true
+  texture: true
+  entropy: true
+  scene_transition: true
+  stabilization: true
+
+# Rolling统计
+rolling:
+  window_sec: 30
+  metrics: [brightness, motion]
+
+# 自适应采样
+adaptive_sampling:
+  enabled: true
+  normal_fps: 1.0
+  burst_fps: 5.0
+  trigger_threshold: 0.7
+  burst_duration_sec: 10
+
+# 并行处理
+num_workers: 4
+gpu_decode: false
+
+# benchmark
+benchmark:
+  test_frames: 1000
+  test_video: null

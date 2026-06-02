@@ -1,0 +1,20 @@
+# Video Processing Estimate
+
+Total videos:      2,083
+Total duration:    1,403 hours (58.5 days)
+Total nights:      61 (2025-05-12 -- 2025-07-11)
+Total size:        1835 GB
+
+## Coarse Pipeline (60x realtime, keyframe-only)
+  1 worker:         23.4 hours
+  4 workers:        5.8 hours (0.24 days)
+
+## Typical Night (e.g. 0515)
+  Night window:     20:30 -- 05:30 (~9h productive)
+  Net cycles:       9
+  Mean cycle:       ~50 min
+  Processing/worker: ~10 min for coarse features
+
+## Recommendation
+  4 workers | ~2-3 hours for full coarse feature extraction
+  Then Layer 2+3 per-night: ~2 min each

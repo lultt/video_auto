@@ -1,0 +1,45 @@
+# === 产物/输出 ===
+outputs/
+cache/
+logs/
+
+# === 大模型权重 ===
+third_party/sam2/checkpoints/
+
+# === netbag 训练数据/产物（仅保留代码和标注） ===
+netbag/0515_first_net_raw/
+netbag/dataset/images/
+netbag/dataset/labels/
+netbag/runs/
+netbag/predictions_preview/
+netbag/video_test/
+netbag/production_test/
+netbag/false_positive_test/
+
+# === Python ===
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# === IDE ===
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# === 系统 ===
+Thumbs.db
+.DS_Store
+Desktop.ini
+
+# === 数据 ===
+data/*.csv
+data/*.parquet
+*.mp4
+*.avi
+*.mkv

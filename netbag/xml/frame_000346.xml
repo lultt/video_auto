@@ -1,0 +1,26 @@
+<annotation>
+	<folder>data</folder>
+	<filename>frame_000346.jpg</filename>
+	<path>C:\data\frame_000346.jpg</path>
+	<source>
+		<database>Unknown</database>
+	</source>
+	<size>
+		<width>2560</width>
+		<height>1440</height>
+		<depth>3</depth>
+	</size>
+	<segmented>0</segmented>
+	<object>
+		<name>0</name>
+		<pose>Unspecified</pose>
+		<truncated>0</truncated>
+		<difficult>0</difficult>
+		<bndbox>
+			<xmin>1590</xmin>
+			<ymin>696</ymin>
+			<xmax>1809</xmax>
+			<ymax>1199</ymax>
+		</bndbox>
+	</object>
+</annotation>

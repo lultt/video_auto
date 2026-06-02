@@ -1,0 +1,6 @@
+path: J:/video_auto/netbag/dataset
+train: images/train
+val: images/val
+
+nc: 1
+names: ['netbag']
