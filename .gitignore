@@ -43,3 +43,19 @@ data/*.parquet
 *.mp4
 *.avi
 *.mkv
+
+# === 第二阶段:数据集/图片产物（体量大，不进 git）===
+dataset/
+dataset_v2_review/
+dataset_v2_3cls/
+fishing_status/
+hard_cases/
+confusions/
+timeline_test/
+
+# === 训练 runs / 模型权重 ===
+runs/
+*.pt
+
+# === 训练日志 ===
+*_log.txt

@@ -98,7 +98,27 @@
       "Bash(net use *)",
       "Read(///DS224plus/video/video/**)",
       "Bash(mount)",
-      "Bash(ping -n 2 DS224plus)"
+      "Bash(ping -n 2 DS224plus)",
+      "Bash(command -v ffmpeg)",
+      "Bash(command -v ffprobe)",
+      "Bash(command -v python)",
+      "Bash(command -v python3)",
+      "Bash(where ffprobe *)",
+      "Read(//c/ffmpeg/**)",
+      "Read(//c/ProgramData/chocolatey/bin/**)",
+      "Bash(C:/Users/ljj/anaconda3/envs/yolonew/lib/site-packages/imageio_ffmpeg/binaries/ffmpeg-win-x86_64-v7.1.exe -hide_banner -i C:/video/0515/__TRACKED_VAR__)",
+      "Bash(mkdir -p \"J:/video_auto/_smoke\")",
+      "Bash(rm -f \"J:/video_auto/_smoke/\"*.jpg)",
+      "Bash(C:/Users/ljj/anaconda3/envs/yolonew/lib/site-packages/imageio_ffmpeg/binaries/ffmpeg-win-x86_64-v7.1.exe -hide_banner -loglevel error -ss 981 -i C:/video/0515/ch01_20250515_205339_214053topspeed.mp4 -t 3 -vf fps=1 -q:v 1 -start_number 0 J:/video_auto/_smoke/f_%06d.jpg)",
+      "Bash(\"C:/Windows/System32/nvidia-smi.exe\" --query-gpu=name,driver_version --format=csv,noheader)",
+      "Bash(C:/Users/ljj/anaconda3/envs/yolonew/lib/site-packages/imageio_ffmpeg/binaries/ffmpeg-win-x86_64-v7.1.exe -hide_banner -hwaccels)",
+      "Bash(rm -f \"J:/video_auto/_gpu_test/\"*.jpg)",
+      "Bash(C:/Users/ljj/anaconda3/envs/yolonew/lib/site-packages/imageio_ffmpeg/binaries/ffmpeg-win-x86_64-v7.1.exe -hide_banner -loglevel error -hwaccel cuda -hwaccel_output_format cuda -c:v hevc_cuvid -ss 847 -i C:/video/0515/ch01_20250515_214053topspeed.mp4 -t 30 -vf fps=1/5,hwdownload,format=nv12,format=bgr24 -vsync 0 -q:v 2 J:/video_auto/_gpu_test/a_%03d.jpg)",
+      "Bash(echo \"exitA=$? files=$\\(ls J:/video_auto/_gpu_test/a_*.jpg)",
+      "Bash(rm -f \"J:/video_auto/_gpu_bench/\"*.jpg)",
+      "Bash(C:/Users/ljj/anaconda3/envs/yolonew/lib/site-packages/imageio_ffmpeg/binaries/ffmpeg-win-x86_64-v7.1.exe -hide_banner -loglevel error -hwaccel cuda -hwaccel_output_format cuda -c:v hevc_cuvid -ss 847 -i C:/video/0515/ch01_20250515_214053_222634topspeed.mp4 -t 1680 -vf fps=1/5,hwdownload,format=nv12,format=bgr24 -vsync 0 -q:v 2 -start_number 0 J:/video_auto/_gpu_bench/f_%06d.jpg)",
+      "Bash(C:/Users/ljj/anaconda3/envs/yolonew/lib/site-packages/imageio_ffmpeg/binaries/ffmpeg-win-x86_64-v7.1.exe -hide_banner -loglevel error -hwaccel cuda -hwaccel_output_format cuda -c:v hevc_cuvid -discard nokey -ss 847 -i C:/video/0515/ch01_20250515_214053_222634topspeed.mp4 -t 1680 -vf hwdownload,format=nv12,format=bgr24 -vsync 0 -q:v 2 -start_number 0 J:/video_auto/_kf_bench/k_%06d.jpg)",
+      "Bash(git add *)"
     ]
   }
 }
